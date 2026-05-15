@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -X POST http://localhost/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"admin@familia.com\",\"password\":\"password\"}')",
+      "Bash(curl -sv -X POST http://localhost/api/v1/auth/register -H 'Content-Type: application/json' -d '{\"name\":\"Admin\",\"email\":\"admin@test.com\",\"password\":\"password\",\"password_confirmation\":\"password\",\"family_name\":\"Familia Teste\"}')",
+      "Bash(curl -s http://localhost:8081/api/v1/categories -H 'Authorization: Bearer 2|NWSDg14KB8uQUe0R3mbJTVXiUVAAgieAMJUqoVXzae60053b')",
+      "Bash(python3 -c ' *)",
+      "Bash(curl -s http://localhost:8081/api/v1/credit-cards/1/statements -H 'Authorization: Bearer 2|NWSDg14KB8uQUe0R3mbJTVXiUVAAgieAMJUqoVXzae60053b' -H 'Accept: application/json')",
+      "Bash(curl -s -X POST http://localhost:8081/api/v1/budgets -H 'Authorization: Bearer 2|NWSDg14KB8uQUe0R3mbJTVXiUVAAgieAMJUqoVXzae60053b' -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{\"category_id\":2,\"year\":2026,\"month\":5,\"amount\":80000}')",
+      "Bash(sudo chown -R leandro:leandro /home/leandro/code/financas/frontend/src/)",
+      "Bash(curl -s http://localhost:5174/)",
+      "Bash(curl -s http://localhost:5174/api/v1/auth/register -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{\"name\":\"Test\",\"email\":\"proxy@test.com\",\"password\":\"password\",\"password_confirmation\":\"password\",\"family_name\":\"Proxy Test\"}')",
+      "Bash(curl -s \"http://localhost:5174/src/main.js\")",
+      "Bash(xargs cat)",
+      "Bash(docker cp *)"
+    ]
+  }
+}

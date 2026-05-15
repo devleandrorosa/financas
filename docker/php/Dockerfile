@@ -18,8 +18,8 @@ RUN apt-get update && apt-get install -y \
         bcmath \
         zip \
         opcache \
-    && pecl install xdebug \
-    && docker-php-ext-enable xdebug \
+    && pecl install xdebug redis \
+    && docker-php-ext-enable xdebug redis \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
