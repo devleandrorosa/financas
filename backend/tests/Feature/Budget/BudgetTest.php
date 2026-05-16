@@ -103,7 +103,7 @@ class BudgetTest extends TenantTestCase
                              'amount'      => 90000,
                          ]);
 
-        $response->assertStatus(201)
+        $response->assertStatus(200)
                  ->assertJsonPath('data.amount', 90000);
 
         $listResponse = $this->withHeaders($this->authHeaders())

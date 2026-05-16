@@ -14,7 +14,7 @@ class RecurringRuleService
 
     public function create(array $data): RecurringRule
     {
-        return RecurringRule::create($data);
+        return RecurringRule::create($data)->fresh();
     }
 
     public function update(RecurringRule $rule, array $data): RecurringRule

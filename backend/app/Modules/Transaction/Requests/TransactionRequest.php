@@ -13,7 +13,7 @@ class TransactionRequest extends FormRequest
             'amount'         => 'required|integer|min:1',
             'type'           => 'required|in:income,expense',
             'date'           => 'required|date',
-            'status'         => 'nullable|in:pending,confirmed,cancelled',
+            'status'         => 'nullable|in:pending,completed,confirmed,cancelled',
             'notes'          => 'nullable|string',
             'category_id'    => 'nullable|integer|exists:categories,id',
             'bank_account_id' => 'nullable|integer|exists:bank_accounts,id',

@@ -36,20 +36,14 @@ class ProjectionServiceTest extends TestCase
 
     public function test_project_returns_correct_number_of_months(): void
     {
-        RecurringRule::shouldReceive('where->get')
-            ->andReturn(new Collection());
-
-        $result = $this->service->project(6);
+        $result = $this->service->project(6, new Collection());
 
         $this->assertCount(6, $result);
     }
 
     public function test_project_result_has_required_keys(): void
     {
-        RecurringRule::shouldReceive('where->get')
-            ->andReturn(new Collection());
-
-        $result = $this->service->project(1);
+        $result = $this->service->project(1, new Collection());
 
         $this->assertArrayHasKey('year', $result[0]);
         $this->assertArrayHasKey('month', $result[0]);
@@ -71,10 +65,7 @@ class ProjectionServiceTest extends TestCase
             'active'     => true,
         ]);
 
-        RecurringRule::shouldReceive('where->get')
-            ->andReturn(new Collection([$rule]));
-
-        $result = $this->service->project(3);
+        $result = $this->service->project(3, new Collection([$rule]));
 
         foreach ($result as $month) {
             $this->assertSame(500000, $month['income']);
@@ -85,7 +76,6 @@ class ProjectionServiceTest extends TestCase
     public function test_yearly_rule_appears_only_in_its_month(): void
     {
         $now = Carbon::now()->startOfMonth();
-        // Regra anual cujo mês coincide com o mês atual
         $rule = $this->makeRule([
             'type'       => 'expense',
             'frequency'  => 'yearly',
@@ -94,12 +84,8 @@ class ProjectionServiceTest extends TestCase
             'end_date'   => null,
         ]);
 
-        RecurringRule::shouldReceive('where->get')
-            ->andReturn(new Collection([$rule]));
+        $result = $this->service->project(12, new Collection([$rule]));
 
-        $result = $this->service->project(12);
-
-        // Deve aparecer exatamente uma vez (mês atual, e talvez mês atual+12 se projeção fosse maior)
         $monthsWithExpense = collect($result)->where('expense', '>', 0);
         $this->assertCount(1, $monthsWithExpense);
         $this->assertSame(120000, $monthsWithExpense->first()['expense']);
@@ -123,10 +109,7 @@ class ProjectionServiceTest extends TestCase
             'end_date'   => null,
         ]);
 
-        RecurringRule::shouldReceive('where->get')
-            ->andReturn(new Collection([$income, $expense]));
-
-        $result = $this->service->project(1);
+        $result = $this->service->project(1, new Collection([$income, $expense]));
 
         $this->assertSame(300000, $result[0]['income']);
         $this->assertSame(120000, $result[0]['expense']);
@@ -143,10 +126,7 @@ class ProjectionServiceTest extends TestCase
             'end_date'   => null,
         ]);
 
-        RecurringRule::shouldReceive('where->get')
-            ->andReturn(new Collection([$rule]));
-
-        $result = $this->service->project(3);
+        $result = $this->service->project(3, new Collection([$rule]));
 
         $this->assertSame(100000, $result[0]['cumulative']);
         $this->assertSame(200000, $result[1]['cumulative']);
@@ -159,14 +139,11 @@ class ProjectionServiceTest extends TestCase
             'type'       => 'income',
             'frequency'  => 'monthly',
             'amount'     => 500000,
-            'start_date' => Carbon::now()->addYear()->toDateString(), // começa no futuro
+            'start_date' => Carbon::now()->addYear()->toDateString(),
             'end_date'   => null,
         ]);
 
-        RecurringRule::shouldReceive('where->get')
-            ->andReturn(new Collection([$rule]));
-
-        $result = $this->service->project(3);
+        $result = $this->service->project(3, new Collection([$rule]));
 
         foreach ($result as $month) {
             $this->assertSame(0, $month['income']);
@@ -180,13 +157,10 @@ class ProjectionServiceTest extends TestCase
             'frequency'  => 'monthly',
             'amount'     => 200000,
             'start_date' => Carbon::now()->subYears(2)->toDateString(),
-            'end_date'   => Carbon::now()->subMonth()->toDateString(), // expirou
+            'end_date'   => Carbon::now()->subMonth()->toDateString(),
         ]);
 
-        RecurringRule::shouldReceive('where->get')
-            ->andReturn(new Collection([$rule]));
-
-        $result = $this->service->project(3);
+        $result = $this->service->project(3, new Collection([$rule]));
 
         foreach ($result as $month) {
             $this->assertSame(0, $month['expense']);
@@ -206,10 +180,7 @@ class ProjectionServiceTest extends TestCase
             'end_date'   => null,
         ]);
 
-        RecurringRule::shouldReceive('where->get')
-            ->andReturn(new Collection([$rule]));
-
-        $result = $this->service->project(1);
+        $result = $this->service->project(1, new Collection([$rule]));
 
         $this->assertSame(1000 * $daysInMonth, $result[0]['expense']);
     }

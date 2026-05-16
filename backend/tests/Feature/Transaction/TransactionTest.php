@@ -235,7 +235,7 @@ class TransactionTest extends TenantTestCase
                          ->getJson('/api/v1/transactions?type=income');
 
         $response->assertStatus(200);
-        foreach ($response->json('data') as $item) {
+        foreach ($response->json('data.data') as $item) {
             $this->assertSame('income', $item['type']);
         }
     }
@@ -257,7 +257,7 @@ class TransactionTest extends TenantTestCase
                          ->getJson('/api/v1/transactions?year=2026&month=1');
 
         $response->assertStatus(200);
-        $this->assertCount(1, $response->json('data'));
+        $this->assertCount(1, $response->json('data.data'));
     }
 
     // ── Destroy ───────────────────────────────────────────────────────────

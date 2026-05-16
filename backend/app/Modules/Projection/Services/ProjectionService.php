@@ -4,12 +4,13 @@ namespace App\Modules\Projection\Services;
 
 use App\Models\RecurringRule;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProjectionService
 {
-    public function project(int $months): array
+    public function project(int $months, ?Collection $rules = null): array
     {
-        $rules = RecurringRule::where('active', true)->get();
+        $rules ??= RecurringRule::where('active', true)->get();
 
         $result = [];
         $cumulative = 0;

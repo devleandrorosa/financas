@@ -25,7 +25,8 @@ class BudgetController extends Controller
     public function store(BudgetRequest $request): JsonResponse
     {
         $budget = $this->service->upsert($request->validated());
-        return response()->json(['data' => $budget, 'message' => 'Orçamento salvo.', 'status' => 200]);
+        $status = $budget->wasRecentlyCreated ? 201 : 200;
+        return response()->json(['data' => $budget, 'message' => 'Orçamento salvo.', 'status' => $status], $status);
     }
 
     public function destroy(Budget $budget): JsonResponse

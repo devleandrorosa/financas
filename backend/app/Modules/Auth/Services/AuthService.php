@@ -6,7 +6,6 @@ use App\Core\Services\TenantProvisioningService;
 use App\Models\Family;
 use App\Models\Invitation;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -48,13 +47,14 @@ class AuthService
 
     public function login(array $data): array
     {
-        if (! Auth::attempt(['email' => $data['email'], 'password' => $data['password']])) {
+        $user = User::where('email', $data['email'])->first();
+
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Credenciais inválidas.'],
             ]);
         }
 
-        $user = Auth::user();
         $user->tokens()->delete();
         $token = $user->createToken('api')->plainTextToken;
 
@@ -67,7 +67,7 @@ class AuthService
 
     public function logout(User $user): void
     {
-        $user->currentAccessToken()->delete();
+        $user->tokens()->delete();
     }
 
     public function acceptInvite(array $data): array
