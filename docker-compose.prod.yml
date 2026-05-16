@@ -1,8 +1,7 @@
 services:
   nginx:
     image: nginx:1.27-alpine
-    ports:
-      - "80:80"
+    container_name: financas_nginx
     volumes:
       - ./frontend/dist:/var/www/frontend/dist:ro
       - ./backend:/var/www/backend:ro
@@ -10,51 +9,45 @@ services:
     depends_on:
       - app
     restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.financas.rule=Host(`${APP_DOMAIN}`)"
+      - "traefik.http.routers.financas.tls=true"
+      - "traefik.http.routers.financas.tls.certresolver=letsencrypt"
+      - "traefik.http.services.financas.loadbalancer.server.port=80"
     networks:
       - financas
+      - infra
 
   app:
     build:
       context: .
       dockerfile: docker/php/Dockerfile.prod
+    container_name: financas_app
     volumes:
       - ./backend:/var/www/backend
     env_file: ./backend/.env
-    depends_on:
-      - postgres
     restart: always
     networks:
       - financas
+      - infra
 
   worker:
     build:
       context: .
       dockerfile: docker/php/Dockerfile.prod
+    container_name: financas_worker
     volumes:
       - ./backend:/var/www/backend
     env_file: ./backend/.env
     command: php artisan queue:work --sleep=3 --tries=4 --max-time=3600
-    depends_on:
-      - postgres
     restart: always
     networks:
       - financas
-
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: financas
-      POSTGRES_USER: financas
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env da raiz}
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    restart: always
-    networks:
-      - financas
-
-volumes:
-  pgdata:
+      - infra
 
 networks:
   financas:
     driver: bridge
+  infra:
+    external: true

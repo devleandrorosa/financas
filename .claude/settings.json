@@ -12,7 +12,25 @@
       "Bash(curl -s http://localhost:5174/api/v1/auth/register -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{\"name\":\"Test\",\"email\":\"proxy@test.com\",\"password\":\"password\",\"password_confirmation\":\"password\",\"family_name\":\"Proxy Test\"}')",
       "Bash(curl -s \"http://localhost:5174/src/main.js\")",
       "Bash(xargs cat)",
-      "Bash(docker cp *)"
+      "Bash(docker cp *)",
+      "Bash(xargs ls -la)",
+      "Bash(mkdir -p /home/leandro/code/infra/traefik)",
+      "Bash(git -C /home/leandro/code/financas ls-files --error-unmatch backend/app/Http/Controllers/AuthController.php)",
+      "Bash(git -C /home/leandro/code/financas status --short)",
+      "Bash(git -C /home/leandro/code/financas ls-files backend frontend --error-unmatch)",
+      "Bash(git -C /home/leandro/code/financas ls-files --others --exclude-standard)",
+      "Bash(git -C /home/leandro/code/financas/backend status --short)",
+      "Bash(git -C /home/leandro/code/financas/frontend status --short)",
+      "Bash(git -C /home/leandro/code/financas/backend log --oneline -5)",
+      "Bash(git -C /home/leandro/code/financas/frontend log --oneline -5)",
+      "Bash(rm -rf /home/leandro/code/financas/backend/.git /home/leandro/code/financas/frontend/.git && echo \"Removidos\")",
+      "Bash(ls ~/.ssh/ 2>/dev/null)",
+      "Read(//home/leandro/.ssh/**)",
+      "Bash(grep -v '^$')"
+    ],
+    "additionalDirectories": [
+      "/home/leandro/code/infra",
+      "/home/leandro/code/financas/backend/.git"
     ]
   }
 }

@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+vendor/
+node_modules/
+.git/
+.idea/
+.vscode/
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/ai_imports/*
+tests/
+phpunit.xml
+README.md

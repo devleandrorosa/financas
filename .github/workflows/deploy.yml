@@ -1,0 +1,66 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      # Envia o dist buildado para o VPS antes do git pull,
+      # pois frontend/dist/ é gitignored e não sobe pelo repo.
+      - name: Enviar dist para o VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: root
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22022
+          source: "frontend/dist/"
+          target: "/root/code/financas/"
+
+      - name: Deploy no VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: root
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22022
+          script: |
+            set -e
+            cd /root/code/financas
+
+            git pull origin main
+
+            # Reconstrói apenas as imagens com Dockerfile (app e worker).
+            # nginx usa imagem pública e serve frontend/dist/ por volume.
+            docker compose -f docker-compose.prod.yml up -d --build
+
+            docker compose -f docker-compose.prod.yml exec -T app \
+              composer install --no-dev --no-interaction --optimize-autoloader
+
+            docker compose -f docker-compose.prod.yml exec -T app php artisan migrate --force
+            docker compose -f docker-compose.prod.yml exec -T app php artisan config:cache
+            docker compose -f docker-compose.prod.yml exec -T app php artisan route:cache
+
+            # Worker roda em loop contínuo com código carregado na memória;
+            # precisa de restart explícito para pegar mudanças de código via volume.
+            docker compose -f docker-compose.prod.yml restart worker

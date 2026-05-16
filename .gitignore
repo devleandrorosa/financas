@@ -1,3 +1,11 @@
-backend/
-frontend/
+# Ambiente
 .env
+*.env.local
+
+# OS / editores
+.DS_Store
+Thumbs.db
+*.log
+
+# Claude Code (settings locais com tokens/permissões de dev)
+.claude/settings.local.json
